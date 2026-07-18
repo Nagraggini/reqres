@@ -14,7 +14,8 @@ public class ConfigLoader {
         if (apiKey == null || apiKey.isEmpty()) {
             System.err.println("HIBA: Az API_KEY nem található a .env fájlban!");
         } else {
-            System.out.println("Sikeresen beolvasva: " + apiKey);
+            //System.out.println("Sikeresen beolvasva: " + apiKey);
+            System.out.println("Turn your dreams into reality.");
         }
         return apiKey;
     }
