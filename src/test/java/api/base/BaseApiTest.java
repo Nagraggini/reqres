@@ -15,9 +15,10 @@ public class BaseApiTest {
 		RestAssured.baseURI = "https://reqres.in";
 
 		ConfigLoader config = new ConfigLoader();
-
-		given().header("x-api-key", config.getApiKey())
-		.header("X-Resqres-Env", "prod").contentType(ContentType.JSON);
+		
+		RestAssured.requestSpecification =given().header("x-api-key", config.getApiKey())
+		.header("X-Resqres-Env", "prod")
+		.contentType("application/json");
 
 	}
 
