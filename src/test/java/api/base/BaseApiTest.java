@@ -18,7 +18,8 @@ public class BaseApiTest {
 		
 		RestAssured.requestSpecification =given().header("x-api-key", config.getApiKey())
 		.header("X-Resqres-Env", "prod")
-		.contentType("application/json");
+		.accept(ContentType.JSON)
+		.contentType(ContentType.JSON);
 
 	}
 

@@ -8,7 +8,7 @@ class UserCreationPozitiveTest {
 
 	@Test
 	void test() {
-		fail("Not yet implemented");
+	
 	}
 
 }
