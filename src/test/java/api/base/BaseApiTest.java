@@ -9,6 +9,7 @@ import io.restassured.http.ContentType;
 
 public class BaseApiTest {
 
+	// For reduces boilerplate code.
 	@BeforeAll
 	static void setup() {
 
