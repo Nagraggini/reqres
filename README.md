@@ -1,4 +1,3 @@
-[![Run Rest Assured API Tests](https://github.com/Nagraggini/reqres/actions/workflows/maven-tests.yml/badge.svg)](https://github.com/Nagraggini/reqres/actions/workflows/maven-tests.yml)
 
 ![Top Language](https://img.shields.io/github/languages/top/Nagraggini/reqres)
 ![Rest Assured](https://img.shields.io/badge/Rest%20Assured-API-orange) ![License](https://img.shields.io/badge/license-MIT-green)
@@ -8,20 +7,14 @@
 
 This repository contains an automated REST API test suite for the [Reqres API](https://reqres.in/).
 
-The project demonstrates API testing using REST Assured, JUnit 5, Maven, Allure Report, and GitHub Actions CI/CD.
-
-## Allure Test Report
-![Allure Report](docs/assets/img/allure_report.png)
-📊 [View the Allure Report](https://nagraggini.github.io/reqres/)
+The project demonstrates API testing using REST Assured, JUnit 5, Maven.
 
 ## Toolbox
 
 - Programming language: Java 21
 - Test automation framework: JUnit 5
 - API testing framework: REST Assured
-- Reporting: Allure Report
 - Build tool: Maven
-- CI/CD: GitHub Actions
 
 Requirements:
 - JDK 21+
