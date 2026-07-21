@@ -22,6 +22,10 @@ jobs:
                   distribution: "temurin"
                   java-version: "21"
 
+            - name: Create .env file
+              run: |
+                  echo "API_KEY=${{ secrets.API_KEY }}" >> .env
+
             - name: Run Maven Tests
               run: mvn -B clean test -DCI=true
 
