@@ -1,89 +1,110 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.ownproject</groupId>
-	<artifactId>reqres</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.ownproject</groupId>
+    <artifactId>reqres</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>reqres</name>
+
+    <url>https://reqres.in/</url>
+
+    <dependencies>
+
+        <!-- Source:
+        https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>5.5.6</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--Maven Wrapper, hogy Eclipse nélkül is lehessen futtatni. -->
+        <!-- Source:
+        https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.11.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Source:
+        https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.26.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--A response válaszokból esetleges objektumképzéshez szükség van json feldolgozó importra is, pl.: jackson -->
+        <!-- Source:
+        https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.17.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--Környezeti változóhoz.-->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+	    
+    </dependencies>
+
+    <!--Verzió megadása, de nem kötelező ezeknél is működik. Ezzel még biztosabb lesz a program.-->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>21</maven.compiler.release>
+        <maven.compiler.target>21</maven.compiler.target>             
+        <allure.version>2.29.1</allure.version>
+    </properties>
 
 
-	<dependencies>
-
-		<!-- Source:
-		https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>rest-assured</artifactId>
-			<version>5.5.6</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!--Maven Wrapper, hogy Eclipse nélkül is lehessen futtatni. -->
-		<!-- Source:
-		https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<version>5.11.0</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- Source:
-		https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.26.0</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<!--A response válaszokból esetleges objektumképzéshez szükség van json feldolgozó importra is, pl.: jackson -->
-		<!-- Source:
-		https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.17.1</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<!--Környezeti változóhoz.-->
-		<dependency>
-			<groupId>io.github.cdimascio</groupId>
-			<artifactId>dotenv-java</artifactId>
-			<version>3.0.0</version>
-		</dependency>
-
-	</dependencies>
-
-	<!--Verzió megadása, de nem kötelező ezeknél is működik. Ezzel még biztosabb lesz a program.-->
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.release>21</maven.compiler.release>
-		<maven.compiler.target>21</maven.compiler.target>
-	</properties>
-
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.4</version>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>
-				<configuration>
-					<release>21</release>
-				</configuration>
-			</plugin>
-			<!--Utána navigálj el a cmd-ben a projekt mappáig, ahol a pom.xml van.
-	        Aztán mvn clean test
-	        -->
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+                <configuration>
+                    <release>21</release>
+                </configuration>
+            </plugin>
+            <!--Utána navigálj el a cmd-ben a projekt mappáig, ahol a pom.xml van.
+            Aztán mvn clean test
+            -->
+	        
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.3.0</version>
+			
+                <configuration>
+                    <systemPropertyVariables>
+                        <allure.results.directory>
+                            ${project.build.directory}/allure-results
+                        </allure.results.directory>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+			
+        </plugins>
+    </build>
 
 </project>
