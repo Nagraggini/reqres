@@ -64,7 +64,7 @@ class UserUpdateTest extends BaseApiTest{
 				""";
 	
 	int userID=1;	
-	LOG.info("Módosítandó user:ID ",userID);
+	LOG.info("Módosítandó id: {}",userID);
 	
 	//Kijelölöd a lenti blokkot. Jobb klikk -> Surround with -> Try-catch Block
 		try {		
