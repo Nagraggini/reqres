@@ -31,6 +31,15 @@ jobs:
                   distribution: "temurin"
                   cache: "maven"
 
+            - name: Create .env file from secrets
+              env:
+                  API_KEY: ${{ secrets.API_KEY }}
+              run: |
+                  echo "API_KEY=$API_KEY" > .env
+                  # Ha a ConfigLoader a classpath-en (target/classes vagy src/main/resources) keresi a .env-et:
+                  mkdir -p target/classes
+                  cp .env target/classes/.env
+
             - name: Run REST Assured Tests with Maven
               run: mvn clean test
               continue-on-error: true
