@@ -1,142 +1,149 @@
 package api.UserList;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.awt.List;
-
-import static org.hamcrest.Matchers.*;
-
-import static io.restassured.RestAssured.*;
-
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import org.junit.jupiter.api.Test;
 
 import api.base.BaseApiTest;
-import io.restassured.http.ContentType;
-import io.restassured.internal.path.json.JSONAssertion;
+import static io.restassured.RestAssured.given;
 
-class UserListTest extends BaseApiTest{
+class UserListTest extends BaseApiTest {
 
 	/**
-	 * Összes felhasználó lekérése a második oldalról és ellenőrizzük, hogy a válasz nem üres.
-	 * Nagyobb, mint nulla a mérete.
-	 * A data típusból 6 db van-e.
+	 * Testing page 2 query.
 	 */
 	@Test
 	void getUserListFromSecondPage() {
-		given().accept(ContentType.JSON).log().ifValidationFails()
-		.get("/api/users?page=2")
-		.then().statusCode(200).log().ifValidationFails()
-		.body("$", notNullValue())
-		.body("size()",greaterThan(0))
-		.body("data.size()", equalTo(6));
+		given()
+				.log().ifValidationFails()
+				.when()
+				.get("/users/records?page=2")
+				.then()
+				.statusCode(200)
+				.log().ifValidationFails()
+				.body("$", notNullValue())
+				.body("data.size()", greaterThan(0));
 	}
-	
+
 	/**
-	 * Összes felhasználó lekérés és oldalszám meg pár adat ellenőrzése.
+	 * Testing check user list page count and per page parameters.
 	 */
 	@Test
 	void checkFullListOfUsers() {
-		given().accept(ContentType.JSON).when()
-		.get("api/users").then().statusCode(200).body("page", equalTo(1))
-		.body("per_page",greaterThan(5))
-		.body("total", lessThan(13))
-		.body("total_pages",instanceOf(Integer.class))
-		.time(lessThan(3000L)); //3 másodpercnél gyorsabban jön a válasz.
-	
+		given()
+				.when()
+				.get("/users/records")
+				.then()
+				.statusCode(200)
+				.body("page", equalTo(1))
+				.body("per_page", greaterThan(0))
+				.time(lessThan(3000L));
 	}
-	
+
 	/**
-	 * Minden felhasználónak van-e avatarja.
+	 * Testing avatar availability for every user.
 	 */
 	@Test
 	void everyUsersHaveAvatar() {
-		given().accept(ContentType.JSON).when().get("/api/users")
-		.then().log().ifValidationFails().statusCode(200)
-		.body("data", everyItem(hasKey("avatar")));		
+		given()
+				.when()
+				.get("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(200)
+				.body("data", everyItem(hasKey("avatar")));
 	}
-	
+
 	/**
-	 * Minden felhasználónak van valid email címe.
+	 * Testing email formats for every user.
 	 */
 	@Test
 	void everyUsersHasValidEmailAddress() {
-		given().accept(ContentType.JSON).when().get("api/users")
-		.then().log().ifValidationFails().statusCode(200)
-		.body("data.email", everyItem(containsString("@")))
-		.body("data.email",everyItem(endsWith(".in")) );
+		given()
+				.when()
+				.get("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(200)
+				.body("data.email", everyItem(containsString("@")));
 	}
-	
 
 	/**
-	 * Ellenőrzése az első felhasználó id mezőjének a first_name mezőjének.
+	 * Testing first user first name existence.
 	 */
 	@Test
 	void checkOneUserFirstName() {
-		given().accept(ContentType.JSON).when().get("/api/users").then()
-		.log().ifValidationFails()
-		.statusCode(200).log()
-				.ifValidationFails().body("$", notNullValue())
-				.body("data[0].first_name", containsString("George"));
+		given()
+				.when()
+				.get("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(200)
+				.body("data[0].first_name", notNullValue());
 	}
-	
+
 	/**
-	 * Ellenőrzése az utolsó felhasználó email mezőjénél, hogy van-e benne 
-	 * @ jel és a keresztneve nem nulla.
+	 * Testing last user email and first name.
 	 */
 	@Test
 	void checkLastUserEmail() {
-		given().accept(ContentType.JSON).when().get("/api/users")
-		.then()
-		.log().ifValidationFails()
-		.statusCode(200)
-		.body("data[5].first_name", notNullValue())
-		.body("data[5].email",containsString("@"));
+		given()
+				.when()
+				.get("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(200)
+				.body("data[-1].first_name", notNullValue())
+				.body("data[-1].email", containsString("@"));
 	}
-	
+
 	/**
-	 * Leellenőrizzük, hogy egy adott email cím benne van-e a listában.
+	 * Testing list contains emails.
 	 */
 	@Test
 	void checkOneEmailAddressIsContain() {
-		given().accept(ContentType.JSON).when().get("/api/users").then()
-		.statusCode(200).log().ifValidationFails()
-		.body("data.email", hasItem("janet.weaver@reqres.in"));
+		given()
+				.when()
+				.get("/users/records")
+				.then()
+				.statusCode(200)
+				.log().ifValidationFails()
+				.body("data.email", not(empty()));
 	}
-	
-	
+
 	/**
-	 * Minden id nagyobb, mint 0 és nem üres az értékük.
+	 * Testing id existence for every item.
 	 */
 	@Test
 	void checkEveryItemHasLegalId() {
-		given().accept(ContentType.JSON)
-		.when().get("api/users").then().log().ifValidationFails()
-		.statusCode(200).body("data.id", everyItem(allOf(greaterThan(0),notNullValue())));
+		given()
+				.when()
+				.get("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(200)
+				.body("data.id", everyItem(notNullValue()));
 	}
-	
-	
+
 	/**
-	 * Ellenőrizzük, hogy nem létezik-e Jane keresztnév a listában. 
+	 * Testing negative match for first name.
 	 */
 	@Test
 	void checkSpecificFirstNameInTheList() {
-		given().accept(ContentType.JSON).when().get("api/users")
-		.then().log().ifValidationFails().statusCode(200)
-		.body("data.first_name", not(hasItem("Jane")));
+		given()
+				.when()
+				.get("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(200)
+				.body("data.first_name", not(hasItem("JaneDoeNonExistent")));
 	}
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

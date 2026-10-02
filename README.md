@@ -20,6 +20,15 @@ Requirements:
 - JDK 21+
 - Maven 3.x
 - Internet connection
+- A valid ReqRes API key (`x-api-key` is required for API requests)
+
+Before running the tests, create a `.env` file in the project root:
+
+```env
+API_KEY=your-reqres-api-key
+```
+
+You can also set `API_KEY` as an environment variable. The environment variable takes precedence over `.env`.
   
 To run the tests, execute:
 

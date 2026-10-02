@@ -1,22 +1,31 @@
 package api.base;
 
-
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class ConfigLoader {
-    // Létrehozzuk a Dotenv példányt.
-    private static final Dotenv dotenv = Dotenv.load();
+    private static final Dotenv dotenv = Dotenv.configure()
+            .ignoreIfMissing()
+            .load();
 
     public static String getApiKey() {
-        // Itt hívjuk meg a kulcsot a fájlból.
-    	String apiKey = dotenv.get("API_KEY");
-    	
-        if (apiKey == null || apiKey.isEmpty()) {
-            System.err.println("HIBA: Az API_KEY nem található a .env fájlban!");
-        } else {
-            //System.out.println("Sikeresen beolvasva: " + apiKey);
-            System.out.println("Turn your dreams into reality.");
+        String apiKey = System.getenv("API_KEY");
+        if (apiKey == null || apiKey.isBlank()) {
+            apiKey = dotenv.get("API_KEY");
         }
+
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new IllegalStateException(
+                    "Az API_KEY nincs beállítva. Add meg környezeti változóként vagy a projekt gyökerében lévő .env fájlban.");
+        }
+
         return apiKey;
+    }
+
+    public static String getProjectId() {
+        String projectId = System.getenv("PROJECT_ID");
+        if (projectId == null || projectId.isBlank()) {
+            projectId = dotenv.get("PROJECT_ID");
+        }
+        return projectId;
     }
 }

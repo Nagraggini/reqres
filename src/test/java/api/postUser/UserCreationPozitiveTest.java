@@ -7,64 +7,76 @@ import static org.hamcrest.Matchers.*;
 import org.junit.jupiter.api.Test;
 
 import api.base.BaseApiTest;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import model.User;
 
-class UserCreationPozitiveTest extends BaseApiTest{
+class UserCreationPositiveTest extends BaseApiTest {
 
 	/**
 	 * Új felhasználó létrehozása POST kéréssel.
 	 *
 	 * Ellenőrzi, hogy:
 	 * - a státuszkód 201,
-	 * - a válasz tartalmaz id mezőt,
+	 * - a válasz data objektuma tartalmaz id mezőt,
 	 * - a first_name és email mezők értéke megegyezik a küldött adatokkal.
 	 */
 	@Test
 	void createUserTest() {
-		String requestBody="""
+		String requestBody = """
 				{
-					"first_name":"Elek",
-					"last_name":"Teszt",
-					"email":"tesztelek@teszt.com"
+				    "first_name": "Elek",
+				    "last_name": "Teszt",
+				    "email": "tesztelek@teszt.com"
 				}
 				""";
-		
-		given().body(requestBody)
-		.when().post("api/users")
-		.then().log().ifValidationFails()
-		// Nincs köztes réteg, nem kell a "data."
-			.statusCode(201).body("id",notNullValue())
-			.body("first_name", equalTo("Elek"))
-			.body("email",equalTo("tesztelek@teszt.com"));
+
+		given()
+				.contentType(ContentType.JSON)
+				.body(requestBody)
+				.when()
+				.post("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(201)
+				.body("data.id", notNullValue())
+				.body("data.first_name", equalTo("Elek"))
+				.body("data.email", equalTo("tesztelek@teszt.com"));
 	}
-	
+
 	/**
 	 * Új felhasználó létrehozása POST kéréssel.
 	 *
-	 * Az id mező értékét extract().path() segítségével olvassa ki,
+	 * Az id mező értékét extract().path() segítségével olvassa ki a data
+	 * objektumból,
 	 * majd kiírja a konzolra.
 	 */
 	@Test
 	void createUserTestWithExtractId() {
-		String requestBody="""
+		String requestBody = """
 				{
-					"first_name":"Elek",
-					"last_name":"Teszt",
-					"email":"tesztelek@teszt.com"
+				    "first_name": "Elek",
+				    "last_name": "Teszt",
+				    "email": "tesztelek@teszt.com"
 				}
 				""";
-		
-		String newId=given().body(requestBody)
-		.when().post("api/users")
-		.then().log().ifValidationFails()
-		// Nincs köztes réteg, nem kell a "data."
-			.statusCode(201).body("id",notNullValue())
-			.body("first_name", equalTo("Elek"))
-			.body("email",equalTo("tesztelek@teszt.com")).extract().path("id");
-		System.out.println("New id: "+newId);
+
+		Object newId = given()
+				.contentType(ContentType.JSON)
+				.body(requestBody)
+				.when()
+				.post("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(201)
+				.body("data.id", notNullValue())
+				.body("data.first_name", equalTo("Elek"))
+				.body("data.email", equalTo("tesztelek@teszt.com"))
+				.extract().path("data.id");
+
+		System.out.println("New id: " + newId);
 	}
-	
+
 	/**
 	 * Új felhasználó létrehozása POST kéréssel.
 	 *
@@ -73,83 +85,87 @@ class UserCreationPozitiveTest extends BaseApiTest{
 	 */
 	@Test
 	void createUserTestWithResponseObject() {
-		String requestBody="""
+		String requestBody = """
 				{
-					"first_name":"Elek",
-					"last_name":"Teszt",
-					"email":"tesztelek@teszt.com"
+				    "first_name": "Elek",
+				    "last_name": "Teszt",
+				    "email": "tesztelek@teszt.com"
 				}
 				""";
-		
-		Response responseObj=given().body(requestBody)
-		.when().post("api/users")
-		.then().log().ifValidationFails()
-		// Nincs köztes réteg, nem kell a "data."
-			.statusCode(201).body("id",notNullValue())
-			.body("first_name", equalTo("Elek"))
-			.body("email",equalTo("tesztelek@teszt.com")).extract().response();
-		
-		System.out.println("New id: "+responseObj.path("id")+"\nLast name: "
-		+responseObj.path("last_name"));
-		
-		Integer statusCode=201;
-		assertTrue(statusCode.equals(responseObj.statusCode()));
-		assertEquals("Elek",responseObj.path("first_name"));
+
+		Response responseObj = given()
+				.contentType(ContentType.JSON)
+				.body(requestBody)
+				.when()
+				.post("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(201)
+				.body("data.id", notNullValue())
+				.body("data.first_name", equalTo("Elek"))
+				.body("data.email", equalTo("tesztelek@teszt.com"))
+				.extract().response();
+
+		System.out.println("New id: " + responseObj.path("data.id") + "\nLast name: "
+				+ responseObj.path("data.last_name"));
+
+		assertEquals(201, responseObj.statusCode());
+		assertEquals("Elek", responseObj.path("data.first_name"));
 	}
-	
+
 	/**
 	 * Új felhasználó létrehozása POJO használatával.
 	 *
 	 * A kérés törzsét User objektumból állítja össze,
-	 * majd az új felhasználó azonosítóját extract().path() segítségével olvassa ki.
+	 * majd az új felhasználó azonosítóját extract().path("data.id") segítségével
+	 * olvassa ki.
 	 */
 	@Test
 	void createUserTestWithPOJO() {
-		User user=new User();
-		
+		User user = new User();
 		user.setFirst_name("Elek");
 		user.setLast_name("Teszt");
 		user.setEmail("tesztelek@teszt.com");
-		
-		String newId=
-			given().body(user).when().post("api/users")
-				.then().log().ifValidationFails()
-				.statusCode(201).extract().path("id");
-	
-		System.out.println("New id: "+newId);
-		}
-	
+
+		Object newId = given()
+				.contentType(ContentType.JSON)
+				.body(user)
+				.when()
+				.post("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(201)
+				.extract().path("data.id");
+
+		System.out.println("New id: " + newId);
+	}
+
 	/**
 	 * Új felhasználó létrehozása POJO használatával.
 	 *
-	 * A választ teljes egészében User objektummá alakítja,
+	 * A válasz data objektumát alakítja User objektummá
+	 * (jsonPath().getObject("data", User.class)),
 	 * majd kiolvassa a létrehozott felhasználó azonosítóját.
 	 */
 	@Test
 	void createUserTestWithFullPOJO() {
-		User user=new User();
-		
+		User user = new User();
 		user.setFirst_name("Elek");
 		user.setLast_name("Teszt");
 		user.setEmail("tesztelek@teszt.com");
-		
-		user=
-			given().body(user).when().post("api/users")
-				.then().log().ifValidationFails()
-				.statusCode(201).extract().as(User.class);
-	
-		System.out.println("New id: "+user.getId());
-		}
+
+		user = given()
+				.contentType(ContentType.JSON)
+				.body(user)
+				.when()
+				.post("/users/records")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(201)
+				.extract()
+				.jsonPath()
+				.getObject("data", User.class);
+
+		System.out.println("New id: " + user.getId());
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-

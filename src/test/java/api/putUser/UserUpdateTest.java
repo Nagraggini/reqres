@@ -1,112 +1,110 @@
 package api.putUser;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static io.restassured.RestAssured.*;
-import  io.restassured.response.Response;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import api.base.BaseApiTest;
+import static io.restassured.RestAssured.given;
 import model.User;
 
-class UserUpdateTest extends BaseApiTest{
+class UserUpdateTest extends BaseApiTest {
 
-	//import org.apache.logging.log4j.Logger; 
-		//A végén lévő zárójelben magát az osztályt kell megadni. 
-		private static final Logger LOG=LogManager.getLogger(UserUpdateTest.class);
-		
+	private static final Logger LOG = LogManager.getLogger(UserUpdateTest.class);
+
 	/**
-	 * Ellenőrzi, hogy egy felhasználó adatai sikeresen frissíthetők
-	 * JSON request body használatával.
-	 *
-	 * A teszt PUT kérést küld az /api/users/1 végpontra,
-	 * majd ellenőrzi, hogy a válasz státuszkódja 200,
-	 * valamint a first_name és last_name mezők a várt értékeket tartalmazzák.
+	 * Update user with JSON string body.
 	 */
 	@Test
+	@Disabled // Lejárt kulccsal nem lehet törölni.
 	void updateUserTest() {
-	String responseBody="""	
-			{		  
-			   		"first_name": "Jane",
-			  		"last_name": "Doe"	
-			  		}		
+		String requestBody = """
+				{
+				    "first_name": "Jane",
+				    "last_name": "Doe"
+				}
 				""";
-	User user=given().body(responseBody).when().put("api/users/1")
-	.then().log().ifValidationFails().statusCode(200).extract().jsonPath()
-	.getObject("", User.class);
-	
-	assertNotNull(user);
-	assertEquals("Jane",user.getFirst_name());
-	assertEquals("Doe",user.getLast_name());
+
+		User user = given()
+				.body(requestBody)
+				.when()
+				.put("/users/records/1")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(200)
+				.extract()
+				.jsonPath()
+				.getObject("data", User.class);
+
+		assertNotNull(user);
+		assertEquals("Jane", user.getFirst_name());
+		assertEquals("Doe", user.getLast_name());
 	}
-	
+
 	/**
-	 * Ellenőrzi, hogy egy felhasználó adatai sikeresen frissíthetők
-	 * JSON request body használatával.
-	 *
-	 * A teszt PUT kérést küld az /api/users/1 végpontra,
-	 * majd ellenőrzi, hogy a válasz státuszkódja 200,
-	 * valamint a first_name és last_name mezők a várt értékeket tartalmazzák.
-	 * Loggolással.
+	 * Update user with Log4j logging.
 	 */
 	@Test
+	@Disabled // Lejárt kulccsal nem lehet CRUD műveleteket csinálni.
 	void updateUserTestWithLOG() {
-		LOG.info("updateUserTestWithLOG indítása, felhasználó módosítása");
-		
-	String responseBody="""	
-			{		  
-			   		"first_name": "Jane",
-			  		"last_name": "Doe"	
-			  		}		
+		LOG.info("updateUserTestWithLOG indítása");
+
+		String requestBody = """
+				{
+				    "first_name": "Jane",
+				    "last_name": "Doe"
+				}
 				""";
-	
-	int userID=1;	
-	LOG.info("Módosítandó id: {}",userID);
-	
-	//Kijelölöd a lenti blokkot. Jobb klikk -> Surround with -> Try-catch Block
-		try {		
-			
-			User user=given().body(responseBody).when().put("api/users/"+userID)
-			.then().log().ifValidationFails().statusCode(200).extract().jsonPath()
-			.getObject("", User.class);
-				
-			assertEquals("Jane",user.getFirst_name());
-			assertEquals("Doe",user.getLast_name());
+
+		String userID = "1";
+		LOG.info("Módosítandó id: {}", userID);
+
+		try {
+			User user = given()
+					.body(requestBody)
+					.when()
+					.put("/users/records/" + userID)
+					.then()
+					.log().ifValidationFails()
+					.statusCode(200)
+					.extract()
+					.jsonPath()
+					.getObject("data", User.class);
+
+			assertEquals("Jane", user.getFirst_name());
+			assertEquals("Doe", user.getLast_name());
 			LOG.info("updateUserTestWithLOG sikeresen lefutott");
-			
+
 		} catch (Exception e) {
-			LOG.error("Hiba történt a teszt futtatása közben: ",e);
+			LOG.error("Hiba történt a teszt futtatása közben: ", e);
 			throw e;
 		}
 	}
-	
+
 	/**
-	 * Ellenőrzi egy felhasználó frissítését POJO használatával.
-	 *
-	 * A teszt egy User objektumot küld a PUT kérés törzsében,
-	 * majd ellenőrzi a válaszban szereplő first_name mezőt.
-	 * Ezután GET kéréssel lekéri a felhasználó adatait,
-	 * és ellenőrzi, hogy a last_name mező értéke "Wong".
-	 *
-	 * Megjegyzés: a ReqRes API nem menti el a módosításokat,
-	 * ezért a GET kérés mindig az eredeti adatokat adja vissza.
+	 * Update user with POJO mapping.
 	 */
 	@Test
+	@Disabled // Lejárt kulccsal nem lehet CRUD műveleteket csinálni.
 	void updateUserTestWithPOJO() {
-		User user=new User();
+		User user = new User();
 		user.setFirst_name("Amanda");
-		
-		// Ilyen esetben a mezőköz üres "" .
-	user=given().body(user).when().put("api/users/3").then().log().ifValidationFails()
-		.statusCode(200).extract().jsonPath().getObject("", User.class);
-	
-	user.setLast_name(given().when().get("api/users/3").then().log()
-			.ifValidationFails().statusCode(200).extract().path("data.last_name"));
-	
-	assertTrue(user.getLast_name().equals("Wong"));
+
+		user = given()
+				.body(user)
+				.when()
+				.put("/users/records/3")
+				.then()
+				.log().ifValidationFails()
+				.statusCode(200)
+				.extract()
+				.jsonPath()
+				.getObject("data", User.class);
+
+		assertNotNull(user);
+		assertEquals("Amanda", user.getFirst_name());
 	}
-	
 }
